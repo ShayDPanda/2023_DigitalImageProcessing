@@ -157,8 +157,6 @@ class PNG_Obj:
             )
             return
 
-        self.metaData["bitdepth"] = newBits
-
         imgY = int(self.metaData["size"][1])
         imgX = int(self.metaData["size"][0])
 
@@ -172,6 +170,8 @@ class PNG_Obj:
                 self.pixels[y][x * 3] = thisPixel
                 self.pixels[y][(x * 3) + 1] = thisPixel
                 self.pixels[y][(x * 3) + 2] = thisPixel
+
+        self.metaData["bitdepth"] = newBits
 
     def histoLocal(self, maskSize):
 

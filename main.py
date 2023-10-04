@@ -46,6 +46,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.newImgObj.setCopy(self.origImgObj)
 
         # RESIZING
+        change = True
         change = self.modifyImage_Resize()
 
         # VARYING BIT LEVELS
