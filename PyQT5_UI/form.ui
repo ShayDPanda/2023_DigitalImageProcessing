@@ -6,141 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>813</width>
-    <height>544</height>
+    <width>749</width>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <widget class="QWidget" name="formLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>390</y>
-     <width>381</width>
-     <height>118</height>
-    </rect>
-   </property>
-   <layout class="QFormLayout" name="formLayout_3">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Dimensions (x, y)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Algorithm</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="inputAlgo">
-      <item>
-       <property name="text">
-        <string>Select One</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Nearest Neighbor</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Linear Interpolation</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Bilinear Interpolation</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Bits</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="inputBits">
-      <item>
-       <property name="text">
-        <string>Select One</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>6</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>7</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>8</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QPushButton" name="buttonConfirm">
-      <property name="text">
-       <string>Confirm</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLineEdit" name="input_x"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="input_y"/>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>10</y>
+     <x>30</x>
+     <y>30</y>
      <width>691</width>
      <height>80</height>
     </rect>
@@ -189,8 +66,8 @@
   <widget class="QLabel" name="origImage">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>90</y>
+     <x>30</x>
+     <y>110</y>
      <width>342</width>
      <height>299</height>
     </rect>
@@ -211,8 +88,8 @@
   <widget class="QLabel" name="newImage">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>90</y>
+     <x>380</x>
+     <y>110</y>
      <width>342</width>
      <height>299</height>
     </rect>
@@ -229,6 +106,248 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>420</y>
+     <width>691</width>
+     <height>150</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetFixedSize</enum>
+    </property>
+    <item>
+     <layout class="QFormLayout" name="formLayout_3">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_1">
+        <property name="text">
+         <string>Dimensions (x, y)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLineEdit" name="input_x"/>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="input_y"/>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Algorithm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="inputAlgo">
+        <item>
+         <property name="text">
+          <string>Select One</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nearest Neighbor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Linear Interpolation</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Bilinear Interpolation</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Bits</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="inputBits">
+        <item>
+         <property name="text">
+          <string>Select One</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>6</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>7</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Histogram Eq.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="inputHistoEq">
+        <item>
+         <property name="text">
+          <string>Select One</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Local</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Mask Size ( m^2 )</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="input_histoSize">
+        <property name="text">
+         <string>3</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="buttonConfirm">
+        <property name="text">
+         <string>Confirm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="inputFilter">
+        <item>
+         <property name="text">
+          <string>Select One</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Smoothing</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Median</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sharpening Laplacian</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>High-boosting </string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Filtering </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Filter Size( m^2 )</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="input_filterSize"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

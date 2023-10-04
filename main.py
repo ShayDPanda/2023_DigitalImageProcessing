@@ -8,7 +8,7 @@ LENADEFAULT = "LenaImages/LenaImage.png"
 
 
 def errMsg(message):
-    print("Error Found:", message, "\n")
+    print("Error Found:", message)
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -18,10 +18,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.origImgObj = PNG_Obj(LENADEFAULT)  # SHOULD START AS USER INPUT
         self.newImgObj = PNG_Obj()
 
-        self.selectedAlgo = 0
-        self.newBits = 0
-
-        # Menu functions
+        # Button functions
         self.buttonOpen.clicked.connect(self.openImage)
         self.buttonSave.clicked.connect(self.saveImage)
         self.buttonConfirm.clicked.connect(self.modifyImage)
@@ -49,9 +46,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def modifyImage(self):
         self.newImgObj.setCopy(self.origImgObj)
 
+
+        # RESIZING
         # Combo Boxes
         selectedAlgo = self.inputAlgo.currentIndex()
-        newBits = self.inputBits.currentIndex()
 
         # Line Edits
         newX = self.input_x.text()
@@ -64,16 +62,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             newX = int(newX)
             newY = int(newY)
 
-        if selectedAlgo != 0 and (newX <= 0 or newY <= 0):
-            errMsg(
-                "Invalid Size; Algorithm: "
-                + str(selectedAlgo)
-                + "; Size: Width: "
-                + str(newX)
-                + " Height: "
-                + str(newY)
-            )
-            return
+        if selectedAlgo == 0 and (newX > 0 and newY > 0):
+            errMsg("Resize Skipped, No Algorithm Chosen")
+
+        elif selectedAlgo != 0 and (newX <= 0 or newY <= 0):
+            errMsg("Resize Skipped, Invalid Size")
+
         elif selectedAlgo == 1:
             self.newImgObj.nearestNeighbor(newY, newX)
 
@@ -83,6 +77,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif selectedAlgo == 3:
             self.newImgObj.bilinearInterp(newY, newX)
 
+        else:
+            errMsg("Resize Skipped, Invalid Algorithm")
+
+
+        # VARYING BIT LEVELS
+        newBits = self.inputBits.currentIndex()
         if newBits != 0:
             self.newImgObj.bitMapping(newBits)
 
