@@ -157,6 +157,8 @@ class PNG_Obj:
             )
             return
 
+        self.metaData["bitdepth"] = newBits
+
         imgY = int(self.metaData["size"][1])
         imgX = int(self.metaData["size"][0])
 
@@ -170,6 +172,22 @@ class PNG_Obj:
                 self.pixels[y][x * 3] = thisPixel
                 self.pixels[y][(x * 3) + 1] = thisPixel
                 self.pixels[y][(x * 3) + 2] = thisPixel
+
+    def histoLocal(self, maskSize):
+
+        maskRange =  (maskSize - 1) % 2
+        imgY = int(self.metaData["size"][1])
+        imgX = int(self.metaData["size"][0])
+
+        for y in range(imgY):
+            for x in range(imgX):
+
+                pass
+
+        pass        # TODO
+
+    def histoGlobal(self):
+        pass        # TODO
 
     def printPNG(self):
         try:
