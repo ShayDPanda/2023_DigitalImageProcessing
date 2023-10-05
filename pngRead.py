@@ -160,7 +160,8 @@ class PNG_Obj:
         imgY = int(self.metaData["size"][1])
         imgX = int(self.metaData["size"][0])
 
-        bitChange = self.metaData["bitdepth"] - newBits
+        # bitChange = self.metaData["bitdepth"] - newBits
+        bitChange = 8 - newBits  # Assumes 8 bit image for class
 
         # ONLY WORKS FOR BLACK AND WHITE
         for y in range(imgY):
@@ -174,20 +175,18 @@ class PNG_Obj:
         self.metaData["bitdepth"] = newBits
 
     def histoLocal(self, maskSize):
-
-        maskRange =  (maskSize - 1) % 2
+        maskRange = (maskSize - 1) % 2
         imgY = int(self.metaData["size"][1])
         imgX = int(self.metaData["size"][0])
 
         for y in range(imgY):
             for x in range(imgX):
-
                 pass
 
-        pass        # TODO
+        pass  # TODO
 
     def histoGlobal(self):
-        pass        # TODO
+        pass  # TODO
 
     def printPNG(self):
         try:

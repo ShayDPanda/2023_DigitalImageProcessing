@@ -19,11 +19,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.newImgObj = PNG_Obj()
 
         # Button functions
+        self.buttonLena.clicked.connect(self.openLena)
         self.buttonOpen.clicked.connect(self.openImage)
         self.buttonSave.clicked.connect(self.saveImage)
-        self.buttonConfirm.clicked.connect(self.modifyImage)
         self.buttonEditNew.clicked.connect(self.editNew)
-        self.buttonLena.clicked.connect(self.openLena)
+
+        self.buttonConfirm.clicked.connect(self.modifyImage)
 
     # Getters and Setters
     def openLena(self):
@@ -42,6 +43,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         newPix = QPixmap(self.newImage.pixmap())
         self.origImage.setPixmap(newPix)
 
+    # CONFIRM BUTTON
     def modifyImage(self):
         self.newImgObj.setCopy(self.origImgObj)
 
@@ -53,11 +55,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         newBits = self.inputBits.currentIndex()
         if not change and newBits != 0:
             self.newImgObj.bitMapping(newBits)
-            change =  True
+            change = True
 
         # HISTOGRAM EQUALIZING
         if not change:
             self.modifyImage_HistogramEQ()
+
+        # FILTERING
+        if not change:
+            self.modifyImage_Filter()
 
         # If there was a change, print
         if change:
@@ -82,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             newX = 0
             newY = 0
         else:
-            newX = int(newX)            # Maybe check if it is an int first?
+            newX = int(newX)  # Maybe check if it is an int first?
             newY = int(newY)
 
         if selectedAlgo == 0 and newX == 0 and newY == 0:
@@ -133,8 +139,39 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         else:
             errMsg("Histogram Equalize Skipped, Invalid Selection")
+            return False
 
         return True
+
+    def modifyImage_Filter(self):
+        filterAlgo = self.inputFilter.currentIndex()
+
+        print(filterAlgo)
+        if filterAlgo == 0:
+            return False
+
+        # Smooth
+        elif filterAlgo == 1:
+            pass
+
+        # Median
+        elif filterAlgo == 2:
+            pass
+
+        # Sharpening Laplacian
+        elif filterAlgo == 3:
+            pass
+
+        # High boosting
+        elif filterAlgo == 4:
+            pass
+
+        else:
+            errMsg("Spatial Filter Skipped, Invalid Selection")
+            return False
+
+        return True
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
