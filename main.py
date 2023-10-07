@@ -144,15 +144,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return True
 
     def modifyImage_Filter(self):
+        # Get from UI
         filterAlgo = self.inputFilter.currentIndex()
+        filterSize = self.input_filterSize.text()
 
-        print(filterAlgo)
         if filterAlgo == 0:
             return False
 
         # Smooth
         elif filterAlgo == 1:
-            pass
+            self.newImgObj.filterSmooth(filterSize)
 
         # Median
         elif filterAlgo == 2:

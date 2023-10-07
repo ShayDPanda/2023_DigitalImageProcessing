@@ -33,10 +33,10 @@ class PNG_Obj:
         self.metaData = dict(newImg[3])
         self.pixels = numpy.array(list(newImg[2]))
 
-        if self.metaData["bitdepth"] == 8:
+        if self.metaData["bitdepth"] == 8 and len(self.pixels[0]) > int(
+            self.metaData["size"][1]
+        ):
             self.resize8Bit()
-        else:
-            print("Program is made for 8 bit, may not work for RGB")
 
         # Notes to self
         # pixels[0][0-2] = (0,0) (x,y)
@@ -201,6 +201,7 @@ class PNG_Obj:
 
     def filterSmooth(self, filterSize):
         imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
 
         filterRange = (filterSize - 1) // 2
         filterRange = list(range(-filterRange, filterRange + 1))
@@ -217,6 +218,7 @@ class PNG_Obj:
                     # Top of image
                     elif y + filterY >= imgY:
                         currentY = imgY - 1
+
                     else:
                         currentY = y + filterY
 
@@ -228,10 +230,15 @@ class PNG_Obj:
                         # Right of image
                         elif x + filterX >= imgX:
                             currentX = imgX - 1
+
                         else:
                             currentX = x + filterX
 
                         pixelSummation += self.pixels[currentY][currentX]
+
+                newImg[y][x] = pixelSummation / (filterSize**2)
+
+        self.pixels = newImg
 
     def printPNG(self):
         try:
