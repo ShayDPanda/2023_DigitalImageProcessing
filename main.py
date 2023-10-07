@@ -164,6 +164,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # High boosting
         elif filterAlgo == 4:
+            # Needs A
             pass
 
         else:

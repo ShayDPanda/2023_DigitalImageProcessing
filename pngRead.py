@@ -29,20 +29,57 @@ class PNG_Obj:
             print("Image not found")
             return
 
+        self.imgFilePath = filePath
         self.metaData = dict(newImg[3])
         self.pixels = numpy.array(list(newImg[2]))
 
-        self.imgFilePath = filePath
+        if self.metaData["bitdepth"] == 8:
+            self.resize8Bit()
+        else:
+            print("Program is made for 8 bit, may not work for RGB")
 
         # Notes to self
         # pixels[0][0-2] = (0,0) (x,y)
         # pixels[0][3-5] = (1,0)
         # pixels[1][0-2] = (0,1)
-        # width * 3, height
+        # width will be x3 for RGB
+
+        # width, height
         # print(len(self.pixels[0]), len(self.pixels))
+
+    def resize8Bit(self):
+        imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
+
+        for y in range(imgY):
+            for x in range(imgX):
+                newImg[y][x] = self.pixels[y][x * 3]
+
+        self.pixels = newImg
 
     def getBitdepth(self):
         return int(self.metaData["bitdepth"])
+
+    def getImgSize(self):
+        y = int(self.metaData["size"][1])
+        x = int(self.metaData["size"][0])
+
+        return y, x
+
+    def scaleUtil(self, newHeight, newWidth):
+        # Empty array for new image
+        newImg = numpy.zeros((newHeight, newWidth), dtype=numpy.uint8)
+
+        # Scale size for new image
+        oldY, oldX = self.getImgSize()
+
+        yScale = float(oldY / newHeight)
+        xScale = float(oldX / newWidth)
+
+        # Set current metadata size
+        self.metaData["size"] = (newWidth, newHeight)
+
+        return newImg, oldY, oldX, yScale, xScale
 
     def nearestNeighbor(self, newHeight, newWidth):
         newImg, oldY, oldX, yScale, xScale = self.scaleUtil(newHeight, newWidth)
@@ -59,9 +96,7 @@ class PNG_Obj:
                 if calculatedY >= oldY:
                     calculatedY = oldY - 1
 
-                newImg[y][(x * 3)] = self.pixels[calculatedY][(calculatedX * 3)]
-                newImg[y][(x * 3) + 1] = self.pixels[calculatedY][(calculatedX * 3) + 1]
-                newImg[y][(x * 3) + 2] = self.pixels[calculatedY][(calculatedX * 3) + 2]
+                newImg[y][x] = self.pixels[calculatedY][calculatedX]
 
         self.pixels = newImg
 
@@ -89,9 +124,7 @@ class PNG_Obj:
                 if calculatedY >= oldY:
                     calculatedY = oldY - 1
 
-                newImg[y][(x * 3)] = self.pixels[calculatedY][(calculatedX * 3)]
-                newImg[y][(x * 3) + 1] = self.pixels[calculatedY][(calculatedX * 3) + 1]
-                newImg[y][(x * 3) + 2] = self.pixels[calculatedY][(calculatedX * 3) + 2]
+                newImg[y][x] = self.pixels[calculatedY][calculatedX]
 
         self.pixels = newImg
 
@@ -125,27 +158,9 @@ class PNG_Obj:
                 if calculatedY >= oldY:
                     calculatedY = oldY - 1
 
-                newImg[y][(x * 3)] = self.pixels[calculatedY][(calculatedX * 3)]
-                newImg[y][(x * 3) + 1] = self.pixels[calculatedY][(calculatedX * 3) + 1]
-                newImg[y][(x * 3) + 2] = self.pixels[calculatedY][(calculatedX * 3) + 2]
+                newImg[y][x] = self.pixels[calculatedY][calculatedX]
 
         self.pixels = newImg
-
-    def scaleUtil(self, newHeight, newWidth):
-        # Empty array for new image
-        newImg = numpy.zeros((newHeight, newWidth * 3), dtype=numpy.uint8)
-
-        # Scale size for new image
-        oldY = int(self.metaData["size"][1])
-        oldX = int(self.metaData["size"][0])
-
-        yScale = float(oldY / newHeight)
-        xScale = float(oldX / newWidth)
-
-        # Set current metadata size
-        self.metaData["size"] = (newWidth, newHeight)
-
-        return newImg, oldY, oldX, yScale, xScale
 
     def bitMapping(self, newBits):
         if newBits >= int(self.metaData["bitdepth"]):
@@ -157,27 +172,23 @@ class PNG_Obj:
             )
             return
 
-        imgY = int(self.metaData["size"][1])
-        imgX = int(self.metaData["size"][0])
+        imgY, imgX = self.getImgSize()
 
         # bitChange = self.metaData["bitdepth"] - newBits
-        bitChange = 8 - newBits  # Assumes 8 bit image for class
+        bitChange = self.metaData["bitdepth"] - newBits  # Assumes 8 bit image for class
 
         # ONLY WORKS FOR BLACK AND WHITE
         for y in range(imgY):
             for x in range(imgX):
-                thisPixel = self.pixels[y][x * 3]
-                thisPixel = math.floor(thisPixel / (2**bitChange)) * (2**bitChange)
-                self.pixels[y][x * 3] = thisPixel
-                self.pixels[y][(x * 3) + 1] = thisPixel
-                self.pixels[y][(x * 3) + 2] = thisPixel
+                self.pixels[y][x] = math.floor(self.pixels[y][x] / (2**bitChange)) * (
+                    2**bitChange
+                )
 
         self.metaData["bitdepth"] = newBits
 
     def histoLocal(self, maskSize):
-        maskRange = (maskSize - 1) % 2
-        imgY = int(self.metaData["size"][1])
-        imgX = int(self.metaData["size"][0])
+        maskRange = (maskSize - 1) // 2
+        imgY, imgX = self.getImgSize()
 
         for y in range(imgY):
             for x in range(imgX):
@@ -188,10 +199,44 @@ class PNG_Obj:
     def histoGlobal(self):
         pass  # TODO
 
+    def filterSmooth(self, filterSize):
+        imgY, imgX = self.getImgSize()
+
+        filterRange = (filterSize - 1) // 2
+        filterRange = list(range(-filterRange, filterRange + 1))
+
+        for y in range(imgY):
+            for x in range(imgX):
+                pixelSummation = 0
+
+                for filterY in filterRange:
+                    # Bottom of image
+                    if y + filterY < 0:
+                        currentY = 0
+
+                    # Top of image
+                    elif y + filterY >= imgY:
+                        currentY = imgY - 1
+                    else:
+                        currentY = y + filterY
+
+                    for filterX in filterRange:
+                        # Left of image
+                        if x + filterX < 0:
+                            currentX = 0
+
+                        # Right of image
+                        elif x + filterX >= imgX:
+                            currentX = imgX - 1
+                        else:
+                            currentX = x + filterX
+
+                        pixelSummation += self.pixels[currentY][currentX]
+
     def printPNG(self):
         try:
             self.imgFilePath = self.imgFilePath.replace(".png", "_Modified.png")
-            pypng.from_array(self.pixels, "RGB").save(self.imgFilePath)
+            pypng.from_array(self.pixels, "L").save(self.imgFilePath)
             print("Saved Image as", self.imgFilePath, "\n")
         except:
             print("FAILED TO PRINT.")
@@ -204,3 +249,5 @@ class PNG_Obj:
                 self.pixels[y][(x * 3)] = 0  # R
                 self.pixels[y][(x * 3) + 1] = 255  # G
                 self.pixels[y][(x * 3) + 2] = 0  # B
+
+                self.pixels[y][x] = 0  # Grey
