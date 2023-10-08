@@ -197,7 +197,46 @@ class PNG_Obj:
         pass  # TODO
 
     def histoGlobal(self):
-        pass  # TODO
+        imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
+
+        imgBits = dict()
+
+        for y in range(imgY):
+            for x in range(imgX):
+                imgBits.setdefault(self.pixels[y][x], 0)
+                imgBits[self.pixels[y][x]] += 1
+
+        for element in imgBits:
+            imgBits[element] /= imgY * imgX
+
+        imgBits = dict(sorted(imgBits.items()))
+        imgValues = numpy.zeros(len(imgBits))
+
+        index = 0
+        for element in imgBits:
+            if index == 0:
+                imgValues[0] = imgBits[element]
+            else:
+                imgValues[index] += imgValues[index - 1] + imgBits[element]
+
+            index += 1
+
+        L = (2 ** self.getBitdepth()) - 1
+        for x in range(len(imgValues)):
+            imgValues[x] *= L
+
+        imgValues = numpy.rint(imgValues)
+        index = 0
+        for element in imgBits:
+            imgBits[element] = imgValues[index]
+            index += 1
+
+        for y in range(imgY):
+            for x in range(imgX):
+                newImg[y][x] = int(imgBits[self.pixels[y][x]])
+
+        self.pixels = newImg
 
     def filterSmooth(self, filterSize):
         imgY, imgX = self.getImgSize()
@@ -278,6 +317,64 @@ class PNG_Obj:
                         pixelMedian.append(self.pixels[currentY][currentX])
 
                 newImg[y][x] = int(numpy.median(pixelMedian))
+
+        self.pixels = newImg
+
+    def filterSharp(self):
+        imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
+
+        filterRange = (3 - 1) // 2
+        filterRange = list(range(-filterRange, filterRange + 1))
+
+        # Laplacian
+        filter = numpy.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
+
+        for y in range(imgY):
+            for x in range(imgX):
+                pixelSummation = 0
+                thisRow = 0
+
+                for filterY in filterRange:
+                    thisCol = 0
+                    # Bottom of image
+                    if y + filterY < 0:
+                        currentY = 0
+
+                    # Top of image
+                    elif y + filterY >= imgY:
+                        currentY = imgY - 1
+
+                    else:
+                        currentY = y + filterY
+
+                    for filterX in filterRange:
+                        # Left of image
+                        if x + filterX < 0:
+                            currentX = 0
+
+                        # Right of image
+                        elif x + filterX >= imgX:
+                            currentX = imgX - 1
+
+                        else:
+                            currentX = x + filterX
+
+                        pixelSummation += (
+                            filter[thisRow][thisCol] * self.pixels[currentY][currentX]
+                        )
+
+                        thisCol += 1
+
+                    thisRow += 1
+
+                if pixelSummation < 0:
+                    pixelSummation = 0
+                elif pixelSummation > 255:
+                    pixelSummation = 255
+
+                    # TODO
+                newImg[y][x] = pixelSummation
 
         self.pixels = newImg
 

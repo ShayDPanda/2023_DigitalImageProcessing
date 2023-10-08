@@ -59,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # HISTOGRAM EQUALIZING
         if not change:
-            self.modifyImage_HistogramEQ()
+            change = self.modifyImage_HistogramEQ()
 
         # FILTERING
         if not change:
@@ -167,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Sharpening Laplacian
         elif filterAlgo == 3:
-            pass
+            self.newImgObj.filterSharp()
 
         # High boosting
         elif filterAlgo == 4:
