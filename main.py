@@ -63,7 +63,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # FILTERING
         if not change:
-            self.modifyImage_Filter()
+            change = self.modifyImage_Filter()
 
         # If there was a change, print
         if change:
@@ -148,7 +148,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         filterAlgo = self.inputFilter.currentIndex()
         filterSize = self.input_filterSize.text()
 
-        if filterAlgo == 0:
+        if filterSize == "":
+            filterSize = 3
+        else:
+            filterSize = int(filterSize)
+
+        if filterAlgo <= 0:
+            print("Filter skipped, Invalid Filter Size")
             return False
 
         # Smooth

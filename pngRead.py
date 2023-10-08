@@ -34,7 +34,7 @@ class PNG_Obj:
         self.pixels = numpy.array(list(newImg[2]))
 
         if self.metaData["bitdepth"] == 8 and len(self.pixels[0]) > int(
-            self.metaData["size"][1]
+            self.metaData["size"][0]
         ):
             self.resize8Bit()
 
