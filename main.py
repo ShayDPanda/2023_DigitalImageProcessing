@@ -163,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Median
         elif filterAlgo == 2:
-            pass
+            self.newImgObj.filterMedian(filterSize)
 
         # Sharpening Laplacian
         elif filterAlgo == 3:

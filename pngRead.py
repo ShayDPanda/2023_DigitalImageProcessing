@@ -240,6 +240,47 @@ class PNG_Obj:
 
         self.pixels = newImg
 
+    def filterMedian(self, filterSize):
+        imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
+
+        filterRange = (filterSize - 1) // 2
+        filterRange = list(range(-filterRange, filterRange + 1))
+
+        for y in range(imgY):
+            for x in range(imgX):
+                pixelMedian = []
+
+                for filterY in filterRange:
+                    # Bottom of image
+                    if y + filterY < 0:
+                        currentY = 0
+
+                    # Top of image
+                    elif y + filterY >= imgY:
+                        currentY = imgY - 1
+
+                    else:
+                        currentY = y + filterY
+
+                    for filterX in filterRange:
+                        # Left of image
+                        if x + filterX < 0:
+                            currentX = 0
+
+                        # Right of image
+                        elif x + filterX >= imgX:
+                            currentX = imgX - 1
+
+                        else:
+                            currentX = x + filterX
+
+                        pixelMedian.append(self.pixels[currentY][currentX])
+
+                newImg[y][x] = int(numpy.median(pixelMedian))
+
+        self.pixels = newImg
+
     def printPNG(self):
         try:
             self.imgFilePath = self.imgFilePath.replace(".png", "_Modified.png")
