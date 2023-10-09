@@ -65,6 +65,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not change:
             change = self.modifyImage_Filter()
 
+        if not change:
+            change = self.modifyImage_BitPlane()
+
         # If there was a change, print
         if change:
             self.newImgObj.printPNG()
@@ -177,6 +180,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             errMsg("Spatial Filter Skipped, Invalid Selection")
             return False
+
+        return True
+
+    def modifyImage_BitPlane(self):
+        bitplane = self.lineEdit.text()
+
+        if bitplane == "":
+            bitplane = 0
+        else:
+            bitplane = int(bitplane)
+
+        if bitplane < 0 or bitplane > self.newImgObj.getBitdepth():
+            print("Remove Bitplane skipped, Invalid Bitplane")
+            return False
+
+        self.newImgObj.removeBitPlane(bitplane)
 
         return True
 

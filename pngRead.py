@@ -378,6 +378,17 @@ class PNG_Obj:
 
         self.pixels = newImg
 
+    def removeBitPlane(self, bitPlane):
+        imgY, imgX = self.getImgSize()
+
+        lower = 2 ** (bitPlane - 1)
+        upper = 2**bitPlane
+
+        for y in range(imgY):
+            for x in range(imgX):
+                if lower <= self.pixels[y][x] < upper:
+                    self.pixels[y][x] = 0
+
     def printPNG(self):
         try:
             self.imgFilePath = self.imgFilePath.replace(".png", "_Modified.png")
