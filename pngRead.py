@@ -187,14 +187,95 @@ class PNG_Obj:
         self.metaData["bitdepth"] = newBits
 
     def histoLocal(self, maskSize):
-        maskRange = (maskSize - 1) // 2
         imgY, imgX = self.getImgSize()
+        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
+
+        filterRange = (maskSize - 1) // 2
+        filterRange = list(range(-filterRange, filterRange + 1))
 
         for y in range(imgY):
             for x in range(imgX):
-                pass
+                imgBits = dict()
 
-        pass  # TODO
+                for filterY in filterRange:
+                    # Bottom of image
+                    if y + filterY < 0:
+                        currentY = 0
+
+                    # Top of image
+                    elif y + filterY >= imgY:
+                        currentY = imgY - 1
+
+                    else:
+                        currentY = y + filterY
+
+                    for filterX in filterRange:
+                        # Left of image
+                        if x + filterX < 0:
+                            currentX = 0
+
+                        # Right of image
+                        elif x + filterX >= imgX:
+                            currentX = imgX - 1
+
+                        else:
+                            currentX = x + filterX
+
+                        imgBits.setdefault(self.pixels[currentY][currentX], 0)
+                        imgBits[self.pixels[currentY][currentX]] += 1
+
+                for element in imgBits:
+                    imgBits[element] /= maskSize * maskSize
+
+                imgBits = dict(sorted(imgBits.items()))
+                imgValues = numpy.zeros(len(imgBits))
+
+                index = 0
+                for element in imgBits:
+                    if index == 0:
+                        imgValues[0] = imgBits[element]
+                    else:
+                        imgValues[index] += imgValues[index - 1] + imgBits[element]
+
+                    index += 1
+
+                L = (2 ** self.getBitdepth()) - 1
+                for thisX in range(len(imgValues)):
+                    imgValues[thisX] *= L
+
+                imgValues = numpy.rint(imgValues)
+                index = 0
+                for element in imgBits:
+                    imgBits[element] = imgValues[index]
+                    index += 1
+
+                for filterY in filterRange:
+                    # Bottom of image
+                    if y + filterY < 0:
+                        currentY = 0
+
+                    # Top of image
+                    elif y + filterY >= imgY:
+                        currentY = imgY - 1
+
+                    else:
+                        currentY = y + filterY
+
+                    for filterX in filterRange:
+                        # Left of image
+                        if x + filterX < 0:
+                            currentX = 0
+
+                        # Right of image
+                        elif x + filterX >= imgX:
+                            currentX = imgX - 1
+
+                        else:
+                            currentX = x + filterX
+
+                        newImg[y][x] = int(imgBits[self.pixels[currentY][currentX]])
+
+        self.pixels = newImg
 
     def histoGlobal(self):
         imgY, imgX = self.getImgSize()
@@ -328,7 +409,8 @@ class PNG_Obj:
         filterRange = list(range(-filterRange, filterRange + 1))
 
         # Laplacian
-        filter = numpy.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
+        firstFilter = numpy.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
+        secondFilter = numpy.array([[1, 1, 1], [1, -8, 1], [1, 1, 1]])
 
         for y in range(imgY):
             for x in range(imgX):
@@ -361,7 +443,8 @@ class PNG_Obj:
                             currentX = x + filterX
 
                         pixelSummation += (
-                            filter[thisRow][thisCol] * self.pixels[currentY][currentX]
+                            firstFilter[thisRow][thisCol]
+                            * self.pixels[currentY][currentX]
                         )
 
                         thisCol += 1
@@ -369,14 +452,21 @@ class PNG_Obj:
                     thisRow += 1
 
                 if pixelSummation < 0:
-                    pixelSummation = 0
-                elif pixelSummation > 255:
-                    pixelSummation = 255
+                    newImg[y][x] = 255
+                else:
+                    newImg[y][x] = 0
 
                     # TODO
                 newImg[y][x] = pixelSummation
 
+        # for y in range(imgY):
+        #     for x in range(imgX):
+        #         newImg[y][x] = (newImg[y][x] * -1) + self.pixels[y][x]
+
         self.pixels = newImg
+
+    def filterBoosting(self, A):
+        pass
 
     def removeBitPlane(self, bitPlane):
         imgY, imgX = self.getImgSize()
