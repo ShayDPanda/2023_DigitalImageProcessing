@@ -32,7 +32,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.openImage()
 
     def openImage(self):
-        newPix = QPixmap(self.origImgObj.imgFilePath)  # SHOULD START AS USER INPUT
+        filename = input("File Path: ")
+        self.origImgObj = PNG_Obj(filename)  # SHOULD START AS FILE EXPLORER
+        newPix = QPixmap(self.origImgObj.imgFilePath)
         self.origImage.setPixmap(newPix)
 
     def saveImage(self):
@@ -174,8 +176,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # High boosting
         elif filterAlgo == 4:
-            # Needs A
+            print("Not implemented")
             pass
+
+        elif filterAlgo == 5:
+            self.newImgObj.filterArithmetic(filterSize)
+
+        elif filterAlgo == 6:
+            self.newImgObj.filterGeometric(filterSize)
+
+        elif filterAlgo == 7:
+            self.newImgObj.filterHarmonic(filterSize)
+
+        elif filterAlgo == 8:
+            self.newImgObj.filterContraharmonic(filterSize)
+
+        elif filterAlgo == 9:
+            self.newImgObj.filterMax(filterSize)
+
+        elif filterAlgo == 10:
+            self.newImgObj.filterMin(filterSize)
+
+        elif filterAlgo == 11:
+            self.newImgObj.filterMidpoint(filterSize)
+
+        elif filterAlgo == 12:
+            self.newImgObj.filterAlphaTrimmed(filterSize)
 
         else:
             errMsg("Spatial Filter Skipped, Invalid Selection")

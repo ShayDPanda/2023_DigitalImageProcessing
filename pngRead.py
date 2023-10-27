@@ -3,6 +3,30 @@ import math
 import png as pypng
 
 
+def checkXRange(currentX, additionalX, maxX):
+    if currentX + additionalX < 0:
+        return 0
+
+    # Top of image
+    elif currentX + additionalX >= maxX:
+        return maxX - 1
+
+    else:
+        return currentX + additionalX
+
+
+def checkYRange(currentY, additionalY, maxY):
+    if currentY + additionalY < 0:
+        return 0
+
+    # Top of image
+    elif currentY + additionalY >= maxY:
+        return maxY - 1
+
+    else:
+        return currentY + additionalY
+
+
 class PNG_Obj:
     def __init__(self, newFile=""):
         #
@@ -198,28 +222,10 @@ class PNG_Obj:
                 imgBits = dict()
 
                 for filterY in filterRange:
-                    # Bottom of image
-                    if y + filterY < 0:
-                        currentY = 0
-
-                    # Top of image
-                    elif y + filterY >= imgY:
-                        currentY = imgY - 1
-
-                    else:
-                        currentY = y + filterY
+                    currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
-                        # Left of image
-                        if x + filterX < 0:
-                            currentX = 0
-
-                        # Right of image
-                        elif x + filterX >= imgX:
-                            currentX = imgX - 1
-
-                        else:
-                            currentX = x + filterX
+                        currentX = checkXRange(x, filterX, imgX)
 
                         imgBits.setdefault(self.pixels[currentY][currentX], 0)
                         imgBits[self.pixels[currentY][currentX]] += 1
@@ -250,28 +256,10 @@ class PNG_Obj:
                     index += 1
 
                 for filterY in filterRange:
-                    # Bottom of image
-                    if y + filterY < 0:
-                        currentY = 0
-
-                    # Top of image
-                    elif y + filterY >= imgY:
-                        currentY = imgY - 1
-
-                    else:
-                        currentY = y + filterY
+                    currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
-                        # Left of image
-                        if x + filterX < 0:
-                            currentX = 0
-
-                        # Right of image
-                        elif x + filterX >= imgX:
-                            currentX = imgX - 1
-
-                        else:
-                            currentX = x + filterX
+                        currentX = checkXRange(x, filterX, imgX)
 
                         newImg[y][x] = int(imgBits[self.pixels[currentY][currentX]])
 
@@ -319,40 +307,27 @@ class PNG_Obj:
 
         self.pixels = newImg
 
-    def filterSmooth(self, filterSize):
+    def filterSetup(self, filterSize):
         imgY, imgX = self.getImgSize()
         newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
 
         filterRange = (filterSize - 1) // 2
         filterRange = list(range(-filterRange, filterRange + 1))
 
+        return imgY, imgX, newImg, filterRange
+
+    def filterSmooth(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
         for y in range(imgY):
             for x in range(imgX):
                 pixelSummation = 0
 
                 for filterY in filterRange:
-                    # Bottom of image
-                    if y + filterY < 0:
-                        currentY = 0
-
-                    # Top of image
-                    elif y + filterY >= imgY:
-                        currentY = imgY - 1
-
-                    else:
-                        currentY = y + filterY
+                    currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
-                        # Left of image
-                        if x + filterX < 0:
-                            currentX = 0
-
-                        # Right of image
-                        elif x + filterX >= imgX:
-                            currentX = imgX - 1
-
-                        else:
-                            currentX = x + filterX
+                        currentX = checkXRange(x, filterX, imgX)
 
                         pixelSummation += self.pixels[currentY][currentX]
 
@@ -361,40 +336,17 @@ class PNG_Obj:
         self.pixels = newImg
 
     def filterMedian(self, filterSize):
-        imgY, imgX = self.getImgSize()
-        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
-
-        filterRange = (filterSize - 1) // 2
-        filterRange = list(range(-filterRange, filterRange + 1))
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
 
         for y in range(imgY):
             for x in range(imgX):
                 pixelMedian = []
 
                 for filterY in filterRange:
-                    # Bottom of image
-                    if y + filterY < 0:
-                        currentY = 0
-
-                    # Top of image
-                    elif y + filterY >= imgY:
-                        currentY = imgY - 1
-
-                    else:
-                        currentY = y + filterY
+                    currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
-                        # Left of image
-                        if x + filterX < 0:
-                            currentX = 0
-
-                        # Right of image
-                        elif x + filterX >= imgX:
-                            currentX = imgX - 1
-
-                        else:
-                            currentX = x + filterX
-
+                        currentX = checkXRange(x, filterX, imgX)
                         pixelMedian.append(self.pixels[currentY][currentX])
 
                 newImg[y][x] = int(numpy.median(pixelMedian))
@@ -402,11 +354,7 @@ class PNG_Obj:
         self.pixels = newImg
 
     def filterSharp(self):
-        imgY, imgX = self.getImgSize()
-        newImg = numpy.zeros((imgY, imgX), dtype=numpy.uint8)
-
-        filterRange = (3 - 1) // 2
-        filterRange = list(range(-filterRange, filterRange + 1))
+        imgY, imgX, newImg, filterRange = self.filterSetup(3)
 
         # Laplacian
         firstFilter = numpy.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
@@ -419,28 +367,11 @@ class PNG_Obj:
 
                 for filterY in filterRange:
                     thisCol = 0
-                    # Bottom of image
-                    if y + filterY < 0:
-                        currentY = 0
 
-                    # Top of image
-                    elif y + filterY >= imgY:
-                        currentY = imgY - 1
-
-                    else:
-                        currentY = y + filterY
+                    currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
-                        # Left of image
-                        if x + filterX < 0:
-                            currentX = 0
-
-                        # Right of image
-                        elif x + filterX >= imgX:
-                            currentX = imgX - 1
-
-                        else:
-                            currentX = x + filterX
+                        currentX = checkXRange(x, filterX, imgX)
 
                         pixelSummation += (
                             firstFilter[thisRow][thisCol]
@@ -465,8 +396,193 @@ class PNG_Obj:
 
         self.pixels = newImg
 
-    def filterBoosting(self, A):
+    def filterBoosting(self, A):  # didnt work
         pass
+
+    def filterArithmetic(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        # 1/mn * summation of pixels in neighborhood
+        mn = filterSize**2
+
+        for y in range(imgY):
+            for x in range(imgX):
+                summation = 0
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        summation += self.pixels[currentY][currentX]
+
+                newImg[y][x] = int(summation / mn)
+
+        self.pixels = newImg
+
+    def filterGeometric(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        mn = filterSize**2
+
+        for y in range(imgY):
+            for x in range(imgX):
+                piProduct = 1
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        piProduct *= self.pixels[currentY][currentX]
+
+                newImg[y][x] = int(piProduct**1 / mn)
+
+        self.pixels = newImg
+
+    def filterHarmonic(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        mn = filterSize**2
+
+        for y in range(imgY):
+            for x in range(imgX):
+                summation = 0
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        summation += 1 / self.pixels[currentY][currentX]
+
+                newImg[y][x] = int(mn / summation)
+
+        self.pixels = newImg
+
+    def filterContraharmonic(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        Q = 0
+
+        for y in range(imgY):
+            for x in range(imgX):
+                numer = 0
+                denom = 0
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        numer += self.pixels[currentY][currentX] ** (Q + 1)
+                        denom += self.pixels[currentY][currentX] ** Q
+
+                newImg[y][x] = int(numer / denom)
+
+        self.pixels = newImg
+
+    def filterMax(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        for y in range(imgY):
+            for x in range(imgX):
+                currentMax = 0
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        if self.pixels[currentY][currentX] > currentMax:
+                            currentMax = self.pixels[currentY][currentX]
+
+                newImg[y][x] = currentMax
+
+        self.pixels = newImg
+
+    def filterMin(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        for y in range(imgY):
+            for x in range(imgX):
+                # 255 because it's the maximum color value
+                currentMin = 255
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        if self.pixels[currentY][currentX] < currentMin:
+                            currentMin = self.pixels[currentY][currentX]
+
+                newImg[y][x] = currentMin
+
+        self.pixels = newImg
+
+    def filterMidpoint(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        for y in range(imgY):
+            for x in range(imgX):
+                currentMax = 0
+                currentMin = 255
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        currentValue = self.pixels[currentY][currentX]
+
+                        if currentValue > currentMax:
+                            currentMax = currentValue
+
+                        if currentValue < currentMin:
+                            currentMin = currentValue
+
+                newImg[y][x] = int((currentMax + currentMin) / 2)
+
+        self.pixels = newImg
+
+    def filterAlphaTrimmed(self, filterSize):
+        imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
+
+        mn = filterSize**2
+        alpha = 3
+        for y in range(imgY):
+            for x in range(imgX):
+                items = []
+
+                for filterY in filterRange:
+                    currentY = checkYRange(y, filterY, imgY)
+
+                    for filterX in filterRange:
+                        currentX = checkXRange(x, filterX, imgX)
+
+                        items.append(self.pixels[currentY][currentX])
+
+                items.sort()
+
+                for d in range(int(alpha / 2)):
+                    items.pop(0)
+                    items.pop(1)
+
+                summation = 0
+                for item in items:
+                    summation += item
+
+                newImg[y][x] = summation / (mn - alpha)
+
+        self.pixels = newImg
 
     def removeBitPlane(self, bitPlane):
         imgY, imgX = self.getImgSize()

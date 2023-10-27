@@ -71,7 +71,9 @@ class Ui_MainWindow(object):
         self.input_y = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.input_y.setObjectName("input_y")
         self.horizontalLayout.addWidget(self.input_y)
-        self.formLayout_3.setLayout(0, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout)
+        self.formLayout_3.setLayout(
+            0, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout
+        )
         self.label_2 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.label_2.setObjectName("label_2")
         self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
@@ -105,23 +107,39 @@ class Ui_MainWindow(object):
         self.inputHistoEq.addItem("")
         self.inputHistoEq.addItem("")
         self.inputHistoEq.addItem("")
-        self.formLayout_3.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.inputHistoEq)
+        self.formLayout_3.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.inputHistoEq
+        )
         self.label_5 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.label_5.setObjectName("label_5")
         self.formLayout_3.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.input_histoSize = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.input_histoSize.setObjectName("input_histoSize")
-        self.formLayout_3.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.input_histoSize)
+        self.formLayout_3.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.input_histoSize
+        )
         self.horizontalLayout_2.addLayout(self.formLayout_3)
-        spacerItem = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.formLayout = QtWidgets.QFormLayout()
         self.formLayout.setObjectName("formLayout")
         self.buttonConfirm = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.buttonConfirm.setObjectName("buttonConfirm")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.buttonConfirm)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.buttonConfirm
+        )
         self.inputFilter = QtWidgets.QComboBox(self.horizontalLayoutWidget)
         self.inputFilter.setObjectName("inputFilter")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
+        self.inputFilter.addItem("")
         self.inputFilter.addItem("")
         self.inputFilter.addItem("")
         self.inputFilter.addItem("")
@@ -136,7 +154,9 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_8)
         self.input_filterSize = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.input_filterSize.setObjectName("input_filterSize")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.input_filterSize)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.input_filterSize
+        )
         self.label = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.label.setObjectName("label")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label)
@@ -160,7 +180,9 @@ class Ui_MainWindow(object):
         self.inputAlgo.setItemText(0, _translate("MainWindow", "Select One"))
         self.inputAlgo.setItemText(1, _translate("MainWindow", "Nearest Neighbor"))
         self.inputAlgo.setItemText(2, _translate("MainWindow", "Linear Interpolation"))
-        self.inputAlgo.setItemText(3, _translate("MainWindow", "Bilinear Interpolation"))
+        self.inputAlgo.setItemText(
+            3, _translate("MainWindow", "Bilinear Interpolation")
+        )
         self.label_3.setText(_translate("MainWindow", "Bits"))
         self.inputBits.setItemText(0, _translate("MainWindow", "Select One"))
         self.inputBits.setItemText(1, _translate("MainWindow", "1"))
@@ -181,8 +203,19 @@ class Ui_MainWindow(object):
         self.inputFilter.setItemText(0, _translate("MainWindow", "Select One"))
         self.inputFilter.setItemText(1, _translate("MainWindow", "Smoothing"))
         self.inputFilter.setItemText(2, _translate("MainWindow", "Median"))
-        self.inputFilter.setItemText(3, _translate("MainWindow", "Sharpening Laplacian"))
+        self.inputFilter.setItemText(
+            3, _translate("MainWindow", "Sharpening Laplacian")
+        )
         self.inputFilter.setItemText(4, _translate("MainWindow", "High-boosting "))
+        self.inputFilter.setItemText(5, _translate("MainWindow", "Arithmetic "))
+        self.inputFilter.setItemText(6, _translate("MainWindow", "Geometric"))
+        self.inputFilter.setItemText(7, _translate("MainWindow", "Harmonic"))
+        self.inputFilter.setItemText(8, _translate("MainWindow", "Contraharmonic"))
+        self.inputFilter.setItemText(9, _translate("MainWindow", "Max"))
+        self.inputFilter.setItemText(10, _translate("MainWindow", "Min"))
+        self.inputFilter.setItemText(11, _translate("MainWindow", "Midpoint"))
+        self.inputFilter.setItemText(12, _translate("MainWindow", "Alpha Trimmed Mean"))
+
         self.label_7.setText(_translate("MainWindow", "Filtering "))
         self.label_8.setText(_translate("MainWindow", "Filter Size( m^2 )"))
         self.label.setText(_translate("MainWindow", "Bitplane Removal"))
