@@ -6,6 +6,15 @@ from MainWindow import Ui_MainWindow
 
 LENADEFAULT = "LenaImages/LenaImage.png"
 
+FILES = {
+    "DIP/Fig0504(a)(gaussian-noise).png",
+    "DIP/Fig0504(b)(rayleigh-noise).png",
+    "DIP/Fig0504(c)(gamma-noise).png",
+    "DIP/Fig0504(g)(neg-exp-noise).png",
+    "DIP/Fig0504(h)(uniform-noise).png",
+    "DIP/Fig0504(i)(salt-pepper-noise).png",
+}
+
 
 def errMsg(message):
     print("Error Found:", message)
@@ -29,13 +38,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # Getters and Setters
     def openLena(self):
         self.origImgObj = PNG_Obj(LENADEFAULT)
-        self.openImage()
-
-    def openImage(self):
-        filename = input("File Path: ")
-        self.origImgObj = PNG_Obj(filename)  # SHOULD START AS FILE EXPLORER
         newPix = QPixmap(self.origImgObj.imgFilePath)
         self.origImage.setPixmap(newPix)
+
+    def openImage(self):
+        for x in FILES:
+            self.origImgObj = PNG_Obj(x)
+            self.modifyImage()
+        # filename = input("File Path: ")
+        # self.origImgObj = PNG_Obj(filename)  # SHOULD START AS FILE EXPLORER
+        # newPix = QPixmap(self.origImgObj.imgFilePath)
+        # self.origImage.setPixmap(newPix)
 
     def saveImage(self):
         self.newImgObj.printPNG()

@@ -428,17 +428,16 @@ class PNG_Obj:
 
         for y in range(imgY):
             for x in range(imgX):
-                piProduct = 1
+                piProduct = float(1)
 
                 for filterY in filterRange:
                     currentY = checkYRange(y, filterY, imgY)
 
                     for filterX in filterRange:
                         currentX = checkXRange(x, filterX, imgX)
-
                         piProduct *= self.pixels[currentY][currentX]
 
-                newImg[y][x] = int(piProduct**1 / mn)
+                newImg[y][x] = math.floor(piProduct ** (1 / mn))
 
         self.pixels = newImg
 
@@ -457,9 +456,13 @@ class PNG_Obj:
                     for filterX in filterRange:
                         currentX = checkXRange(x, filterX, imgX)
 
-                        summation += 1 / self.pixels[currentY][currentX]
+                        if self.pixels[currentY][currentX] != 0:
+                            summation += 1 / self.pixels[currentY][currentX]
 
-                newImg[y][x] = int(mn / summation)
+                if summation == 0:
+                    newImg[y][x] = 0
+                else:
+                    newImg[y][x] = int(mn / summation)
 
         self.pixels = newImg
 
@@ -470,8 +473,8 @@ class PNG_Obj:
 
         for y in range(imgY):
             for x in range(imgX):
-                numer = 0
-                denom = 0
+                numer = float(0)
+                denom = float(0)
 
                 for filterY in filterRange:
                     currentY = checkYRange(y, filterY, imgY)
@@ -482,7 +485,7 @@ class PNG_Obj:
                         numer += self.pixels[currentY][currentX] ** (Q + 1)
                         denom += self.pixels[currentY][currentX] ** Q
 
-                newImg[y][x] = int(numer / denom)
+                newImg[y][x] = math.floor(numer / denom)
 
         self.pixels = newImg
 
@@ -557,7 +560,7 @@ class PNG_Obj:
         imgY, imgX, newImg, filterRange = self.filterSetup(filterSize)
 
         mn = filterSize**2
-        alpha = 3
+        alpha = 4
         for y in range(imgY):
             for x in range(imgX):
                 items = []
