@@ -1,6 +1,7 @@
 import numpy
 import math
 import png as pypng
+import statistics
 
 
 def checkXRange(currentX, additionalX, maxX):
@@ -49,7 +50,7 @@ class PNG_Obj:
         # Set image data
         try:
             newImg = pypng.Reader(filePath).asDirect()
-        except:
+        finally:
             print("Image not found")
             return
 
@@ -396,7 +397,7 @@ class PNG_Obj:
 
         self.pixels = newImg
 
-    def filterBoosting(self, A):  # didnt work
+    def filterBoosting(self, A):  # didn't work
         pass
 
     def filterArithmetic(self, filterSize):
@@ -603,7 +604,7 @@ class PNG_Obj:
             self.imgFilePath = self.imgFilePath.replace(".png", "_Modified.png")
             pypng.from_array(self.pixels, "L").save(self.imgFilePath)
             print("Saved Image as", self.imgFilePath, "\n")
-        except:
+        finally:
             print("FAILED TO PRINT.")
             print(self.pixels)
 
@@ -653,6 +654,7 @@ class PNG_Obj:
             newImg[(y * 4) + 2][0] = self.pixels[y][0]
 
             if y + 1 >= oldY:
+                # END OF HEIGHT
                 newImg[(y * 4) + 3][0] = self.pixels[y][0]
             else:
                 # Corners are the same
@@ -665,6 +667,61 @@ class PNG_Obj:
 
                 # One row of blocks
                 for x in range(oldX):
-                    pass
+                    if x + 1 >= oldX:
+                        # END OF ROW
+                        pass  # TODO
+                    else:
+                        square = numpy.array(
+                            [
+                                self.pixels[y][x],  # Upper Left
+                                self.pixels[y + 1][x],  # Lower Left
+                                self.pixels[y][x + 1],  # Upper Right
+                                self.pixels[y + 1][x + 1],  # Lower Right
+                            ]
+                        )
+
+                        # Homogenous Square
+                        if square[0] == square[1] == square[2] == square[3]:
+                            for offsetX in range(5):
+                                for offsetY in range(5):
+                                    newImg[(y * 4) + offsetY][
+                                        (x * 4) + offsetX
+                                    ] = square[0]
+
+                        # Not Homogenous Square
+                        else:
+                            # Lower right corner
+                            newImg[(y + 1) * 4][(x + 1) * 4] = square[3]
+
+                            # Middle
+                            # x x x x x
+                            # x x x x x
+                            # x x o x x
+                            # x x x x x
+                            # x x x x x
+
+                            newImg[(y * 4) + 2][(x * 4) + 2] = numpy.median(square)
+
+                            # Corners
+                            # x x x x x
+                            # x o x o x
+                            # x x x x x
+                            # x o x o x
+                            # x x x x x
+                            newImg[(y * 4) + 1][(x * 4) + 1] = square[0]
+                            newImg[(y * 4) + 3][(x * 4) + 1] = square[1]
+                            newImg[(y * 4) + 1][(x * 4) + 3] = square[2]
+                            newImg[(y * 4) + 3][(x * 4) + 3] = square[3]
+
+                            # Edge
+                            newImg[(y + 1) * 4][(x * 4) + 2] = square[1]
+                            newImg[(y * 4) + 2][(x + 1) * 4] = square[3]
+
+                            # Fill
+                            # x x x x x
+                            # x x o x o
+                            # x o x o x
+                            # x x o x o
+                            # x o x o x
 
         self.pixels = newImg
