@@ -616,3 +616,55 @@ class PNG_Obj:
                 self.pixels[y][(x * 3) + 2] = 0  # B
 
                 self.pixels[y][x] = 0  # Grey
+
+    def hierarchicalFilling(self, upscale=4):
+        imgY, imgX = self.getImgSize()
+        newY = imgY * upscale
+        newX = imgX * upscale
+        newImg, oldY, oldX, yScale, xScale = self.scaleUtil(newY, newX)
+
+        # TOP ROW
+        for x in range(oldX):
+            # First pixel on block
+            newImg[0][x * 4] = self.pixels[0][x]
+
+            # Pixels between top corners
+            newImg[0][(x * 4) + 1] = self.pixels[0][x]
+            newImg[0][(x * 4) + 2] = self.pixels[0][x]
+
+            # Check if at end of row
+            if x + 1 >= oldX:
+                newImg[0][(x * 4) + 3] = self.pixels[0][x]
+
+            else:
+                # Corners are the same
+                if self.pixels[0][x] == self.pixels[0][x + 1]:
+                    newImg[0][(x * 4) + 3] = self.pixels[0][x]
+
+                # Corners are different
+                else:
+                    newImg[0][(x * 4) + 3] = self.pixels[0][x + 1]
+
+        # REST OF IMAGE
+        for y in range(oldY):
+            # Left Col
+            newImg[(y * 4)][0] = self.pixels[y][0]
+            newImg[(y * 4) + 1][0] = self.pixels[y][0]
+            newImg[(y * 4) + 2][0] = self.pixels[y][0]
+
+            if y + 1 >= oldY:
+                newImg[(y * 4) + 3][0] = self.pixels[y][0]
+            else:
+                # Corners are the same
+                if self.pixels[y][0] == self.pixels[y + 1][0]:
+                    newImg[(y * 4) + 3][0] = self.pixels[y][0]
+
+                # Corners are different
+                else:
+                    newImg[(y * 4) + 3][0] = self.pixels[y + 1][0]
+
+                # One row of blocks
+                for x in range(oldX):
+                    pass
+
+        self.pixels = newImg

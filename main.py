@@ -42,13 +42,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.origImage.setPixmap(newPix)
 
     def openImage(self):
-        for x in FILES:
-            self.origImgObj = PNG_Obj(x)
-            self.modifyImage()
-        # filename = input("File Path: ")
-        # self.origImgObj = PNG_Obj(filename)  # SHOULD START AS FILE EXPLORER
-        # newPix = QPixmap(self.origImgObj.imgFilePath)
-        # self.origImage.setPixmap(newPix)
+        filename = input("File Path: ")
+        self.origImgObj = PNG_Obj(filename)  # SHOULD START AS FILE EXPLORER
+        newPix = QPixmap(self.origImgObj.imgFilePath)
+        self.origImage.setPixmap(newPix)
 
     def saveImage(self):
         self.newImgObj.printPNG()
@@ -83,6 +80,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not change:
             change = self.modifyImage_BitPlane()
 
+        if not change:
+            change = self.modifyImage_FillingHierarchy()
+
         # If there was a change, print
         if change:
             self.newImgObj.printPNG()
@@ -91,6 +91,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Print the original
         else:
+            print("No Change Detected")
             newPix = QPixmap(self.origImgObj.imgFilePath)
             self.newImage.setPixmap(newPix)
 
@@ -226,7 +227,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         bitplane = self.lineEdit.text()
 
         if bitplane == "":
-            bitplane = 0
+            bitplane = -1
         else:
             bitplane = int(bitplane)
 
@@ -236,6 +237,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.newImgObj.removeBitPlane(bitplane)
 
+        return True
+
+    def modifyImage_FillingHierarchy(self):
+        self.newImgObj.hierarchicalFilling()
         return True
 
 
