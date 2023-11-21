@@ -156,6 +156,7 @@ class PNG_Obj:
     def bilinearInterp(self, newHeight, newWidth):
         newImg, oldY, oldX, yScale, xScale = self.scaleUtil(newHeight, newWidth)
 
+        runtime = time.perf_counter()
         for y in range(newHeight):
             for x in range(newWidth):
                 calculatedX = float(int(x)) * xScale
@@ -184,7 +185,8 @@ class PNG_Obj:
                     calculatedY = oldY - 1
 
                 newImg[y][x] = self.pixels[calculatedY][calculatedX]
-
+        runtime = time.perf_counter() - runtime
+        print("Bilinear Interpolation", runtime)
         self.pixels = newImg
 
     def bitMapping(self, newBits):
@@ -633,7 +635,7 @@ class PNG_Obj:
             newImg[yOffset + 1][0] = self.pixels[y][0]
             newImg[yOffset + 2][0] = self.pixels[y][0]
             newImg[yOffset + 3][0] = self.pixels[y + 1][0]
-            newImg[(y + 1) * 4][0] = self.pixels[y + 1][0]  # Lower left pixel
+            newImg[yOffset + 4][0] = self.pixels[y + 1][0]  # Lower left pixel
 
             for x in range(oldX - 1):
                 xOffset = x * 4
@@ -644,7 +646,7 @@ class PNG_Obj:
                     newImg[0][xOffset + 1] = self.pixels[0][x]
                     newImg[0][xOffset + 2] = self.pixels[0][x]
                     newImg[0][xOffset + 3] = self.pixels[0][x + 1]
-                    newImg[0][(x + 1) * 4] = self.pixels[0][x + 1]  # Upper right pixel
+                    newImg[0][xOffset + 4] = self.pixels[0][x + 1]  # Upper right pixel
 
                 # Homogenous Square
                 if (
@@ -654,14 +656,14 @@ class PNG_Obj:
                     == self.pixels[y + 1][x + 1]
                 ):
                     for countY in range(5):
-                        newImg[yOffset + countY][
-                            xOffset : (x + 1) * 4 + 1
-                        ] = self.pixels[y][x]
+                        newImg[yOffset + countY][xOffset : xOffset + 5] = self.pixels[
+                            y
+                        ][x]
 
                 # Not Homogenous
                 else:
                     # Lower right corner
-                    newImg[(y + 1) * 4][(x + 1) * 4] = self.pixels[y + 1][x]
+                    newImg[yOffset + 4][xOffset + 4] = self.pixels[y + 1][x + 1]
 
                     # Middle
                     # x x x x x
